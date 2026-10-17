@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/app_scaffold.dart';
+import 'package:go_router/go_router.dart';
+import '../config/routes.dart';
 
 // Menggunakan StatefulWidget karena butuh initState & dispose untuk TextEditingController
 class WelcomeScreen extends StatefulWidget {
@@ -43,9 +45,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     quizProvider.resetQuiz();
     quizProvider.setUserName(name);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Selamat datang, $name!')),
-    );
+    // Navigasi deklaratif menggunakan go_router sesuai best practice Modul 3!
+    context.push(AppRoutes.quiz);
   }
 
   @override
