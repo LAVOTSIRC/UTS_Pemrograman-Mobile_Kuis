@@ -3,6 +3,16 @@ import '../data/quiz_data.dart';
 import '../models/question_model.dart';
 
 class QuizProvider extends ChangeNotifier {
+
+  // --- STATE TEMA (DARK / LIGHT MODE) ---
+  bool _isDarkMode = false;
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+
   String _userName = '';
   int _currentQuestionIndex = 0;
 
