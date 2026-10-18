@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../screens/welcome_screen.dart';
 import '../screens/quiz_screen.dart';
+import '../screens/result_screen.dart';
 
 // Kelas penyimpan konstanta alamat rute
 class AppRoutes {
@@ -23,6 +24,11 @@ GoRouter createRouter() {
         path: AppRoutes.quiz,
         name: 'quiz',
         builder: (context, state) => const QuizScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.result,
+        name: 'result',
+        builder: (context, state) => const ResultScreen(),
       ),
     ],
   );

@@ -1,3 +1,5 @@
+import 'package:go_router/go_router.dart';
+import '../config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/quiz_provider.dart';
@@ -174,14 +176,8 @@ class QuizScreen extends StatelessWidget {
                               }
 
                               if (quizProvider.isLastQuestion) {
-                                // TODO: Nanti di arahkan ke ResultScreen (Halaman Skor Akhir)
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Kuis Selesai! Skor kamu: ${quizProvider.finalScore}',
-                                    ),
-                                  ),
-                                );
+                                // Berpindah ke Halaman Skor Akhir menggunakan go_router
+                                context.go(AppRoutes.result);
                               } else {
                                 // Pindah ke soal berikutnya
                                 context.read<QuizProvider>().nextQuestion();
