@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import '../providers/quiz_provider.dart';
 
 class OptionCard extends StatelessWidget {
-  final int optionIndex; // 0 = A, 1 = B, 2 = C, 3 = D
-  final String optionText; // Teks pilihan jawaban
-  final bool isSelected; // Apakah pilihan ini sedang dipilih oleh peserta?
-  final VoidCallback onTap; // Aksi saat kartu diklik
+  final int optionIndex;
+  final String optionText;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const OptionCard({
     super.key,
@@ -18,18 +18,14 @@ class OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
-    // Mengecek apakah sedang Dark Mode dari QuizProvider
+    final isLargeScreen = screenWidth > 600;
     final isDark = context.watch<QuizProvider>().isDarkMode;
 
-    // Mengubah angka indeks (0, 1, 2, 3) menjadi huruf label ('A', 'B', 'C', 'D')
     final List<String> optionLetters = ['A', 'B', 'C', 'D'];
     final String letter = optionLetters[optionIndex];
 
-    // Membungkus dengan GestureDetector agar kartu bisa diklik
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -39,26 +35,24 @@ class OptionCard extends StatelessWidget {
           vertical: screenHeight * 0.018,
         ),
         decoration: BoxDecoration(
-          // Jika dipilih (isSelected == true), warnanya biru menyala.
-          // Jika belum dipilih, warnanya putih (Light Mode) atau abu gelap (Dark Mode).
           color: isSelected
               ? const Color(0xFF2563EB)
               : (isDark ? const Color(0xFF1E293B) : Colors.white),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF60A5FA)
                 : (isDark ? Colors.white24 : Colors.grey.shade300),
-            width: isSelected ? 2.0 : 1.0,
+            width: isSelected ? screenWidth * 0.005 : screenWidth * 0.0025,
           ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 1. Lingkaran Huruf A / B / C / D di sebelah kiri
+            // Ukuran lingkaran dinamis berdasarkan lebar layar
             Container(
-              width: 36,
-              height: 36,
+              width: screenWidth * (isLargeScreen ? 0.055 : 0.09),
+              height: screenWidth * (isLargeScreen ? 0.055 : 0.09),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -69,6 +63,7 @@ class OptionCard extends StatelessWidget {
               child: Text(
                 letter,
                 style: TextStyle(
+                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
                   fontWeight: FontWeight.bold,
                   color: isSelected
                       ? const Color(0xFF1E3A8A)
@@ -79,12 +74,11 @@ class OptionCard extends StatelessWidget {
 
             SizedBox(width: screenWidth * 0.035),
 
-            // 2. Teks Pilihan Jawaban (Dibungkus Expanded agar teks panjang otomatis turun ke baris baru dan tidak overflow)
             Expanded(
               child: Text(
                 optionText,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   color: isSelected
                       ? Colors.white
@@ -93,11 +87,11 @@ class OptionCard extends StatelessWidget {
               ),
             ),
 
-            // 3. Ikon Centang jika sedang dipilih
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
                 color: Colors.white,
+                size: screenWidth * (isLargeScreen ? 0.035 : 0.055),
               ),
           ],
         ),
