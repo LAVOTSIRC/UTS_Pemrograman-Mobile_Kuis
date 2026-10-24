@@ -17,9 +17,9 @@ class ExplanationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isLargeScreen = screenWidth > 600;
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width.clamp(0.0, 600.0);
+    final screenHeight = size.height.clamp(0.0, 1000.0);
     final isDark = context.watch<QuizProvider>().isDarkMode;
 
     final bool isCorrect = userAnswerIndex == question.correctAnswerIndex;
@@ -50,7 +50,7 @@ class ExplanationCard extends StatelessWidget {
                 child: Text(
                   'Soal #$questionNumber • ${question.category}',
                   style: TextStyle(
-                    fontSize: screenWidth * (isLargeScreen ? 0.022 : 0.034),
+                    fontSize: screenWidth * 0.034,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.lightBlueAccent : const Color(0xFF1D4ED8),
                   ),
@@ -59,7 +59,7 @@ class ExplanationCard extends StatelessWidget {
               Icon(
                 isCorrect ? Icons.check_circle : Icons.cancel,
                 color: isCorrect ? Colors.green : Colors.redAccent,
-                size: screenWidth * (isLargeScreen ? 0.035 : 0.055),
+                size: screenWidth * 0.055,
               ),
             ],
           ),
@@ -69,7 +69,7 @@ class ExplanationCard extends StatelessWidget {
           Text(
             question.questionText,
             style: TextStyle(
-              fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.037),
+              fontSize: screenWidth * 0.037,
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -80,7 +80,7 @@ class ExplanationCard extends StatelessWidget {
           Text(
             'Jawabanmu: $userAnswerText',
             style: TextStyle(
-              fontSize: screenWidth * (isLargeScreen ? 0.022 : 0.034),
+              fontSize: screenWidth * 0.034,
               fontWeight: FontWeight.bold,
               color: isCorrect ? Colors.green : Colors.redAccent,
             ),
@@ -91,7 +91,7 @@ class ExplanationCard extends StatelessWidget {
             Text(
               'Kunci Jawaban: $correctAnswerText',
               style: TextStyle(
-                fontSize: screenWidth * (isLargeScreen ? 0.022 : 0.034),
+                fontSize: screenWidth * 0.034,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
               ),
@@ -114,14 +114,14 @@ class ExplanationCard extends StatelessWidget {
                 Icon(
                   Icons.lightbulb_outline,
                   color: Colors.amber,
-                  size: screenWidth * (isLargeScreen ? 0.032 : 0.05),
+                  size: screenWidth * 0.05,
                 ),
                 SizedBox(width: screenWidth * 0.025),
                 Expanded(
                   child: Text(
                     question.explanation,
                     style: TextStyle(
-                      fontSize: screenWidth * (isLargeScreen ? 0.022 : 0.034),
+                      fontSize: screenWidth * 0.034,
                       height: 1.4,
                       color: isDark ? Colors.white70 : Colors.blueGrey.shade800,
                     ),

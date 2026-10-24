@@ -16,8 +16,9 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran lebar layar
-    final screenWidth = MediaQuery.of(context).size.width;
+    // Mengambil ukuran lebar layar dengan batas maksimum
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width.clamp(0.0, 600.0);
 
     // Membaca status Dark Mode dari QuizProvider menggunakan context.watch
     final isDark = context.watch<QuizProvider>().isDarkMode;

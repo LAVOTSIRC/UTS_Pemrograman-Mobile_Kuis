@@ -11,9 +11,10 @@ class QuizScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran layar menggunakan MediaQuery
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    // Mengambil ukuran layar menggunakan MediaQuery dengan batas maksimum
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width.clamp(0.0, 600.0);
+    final screenHeight = size.height.clamp(0.0, 1000.0);
 
     // Mendengarkan data kuis dari QuizProvider
     final quizProvider = context.watch<QuizProvider>();
@@ -29,8 +30,7 @@ class QuizScreen extends StatelessWidget {
       showBackButton: true,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isLargeScreen = constraints.maxWidth > 600;
-          final maxWidth = isLargeScreen ? screenWidth * 0.65 : constraints.maxWidth;
+          final maxWidth = screenWidth;
 
           return SingleChildScrollView(
             child: Center(
@@ -48,7 +48,7 @@ class QuizScreen extends StatelessWidget {
                           child: Text(
                             'Peserta: ${quizProvider.userName}',
                             style: TextStyle(
-                              fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                              fontSize: screenWidth * 0.036,
                               fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white70 : Colors.blueGrey.shade700,
                             ),
@@ -66,7 +66,7 @@ class QuizScreen extends StatelessWidget {
                           child: Text(
                             currentQuestion.category,
                             style: TextStyle(
-                              fontSize: screenWidth * (isLargeScreen ? 0.02 : 0.032),
+                              fontSize: screenWidth * 0.032,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.lightBlueAccent : const Color(0xFF1D4ED8),
                             ),
@@ -107,7 +107,7 @@ class QuizScreen extends StatelessWidget {
                       child: Text(
                         currentQuestion.questionText,
                         style: TextStyle(
-                          fontSize: screenWidth * (isLargeScreen ? 0.026 : 0.042),
+                          fontSize: screenWidth * 0.042,
                           fontWeight: FontWeight.w600,
                           height: 1.4,
                           color: isDark ? Colors.white : const Color(0xFF0F172A),
@@ -151,7 +151,7 @@ class QuizScreen extends StatelessWidget {
                               child: Text(
                                 'Sebelumnya',
                                 style: TextStyle(
-                                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
+                                  fontSize: screenWidth * 0.038,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -190,7 +190,7 @@ class QuizScreen extends StatelessWidget {
                             child: Text(
                               quizProvider.isLastQuestion ? 'Selesai & Lihat Skor' : 'Selanjutnya',
                               style: TextStyle(
-                                fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
+                                fontSize: screenWidth * 0.038,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

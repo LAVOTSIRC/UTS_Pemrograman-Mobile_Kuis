@@ -1,3 +1,4 @@
+// lib/screens/result_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -11,72 +12,77 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran layar menggunakan MediaQuery
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width.clamp(0.0, 600.0);
+    final screenHeight = size.height.clamp(0.0, 1000.0);
     final quizProvider = context.watch<QuizProvider>();
     final isDark = quizProvider.isDarkMode;
     final questions = quizProvider.questions;
+
+    // FITUR BARU: Sapaan dinamis berdasarkan skor!
+    String greetingMessage;
+    if (quizProvider.finalScore >= 80) {
+      greetingMessage = 'Luar Biasa, ${quizProvider.userName}!';
+    } else if (quizProvider.finalScore >= 60) {
+      greetingMessage = 'Selamat, ${quizProvider.userName}!';
+    } else {
+      greetingMessage = 'Yaaah Tetap Semangat, ${quizProvider.userName}!';
+    }
 
     return AppScaffold(
       title: 'Hasil Evaluasi Kuis',
       showBackButton: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isLargeScreen = constraints.maxWidth > 600;
-          final maxWidth = isLargeScreen ? screenWidth * 0.65 : constraints.maxWidth;
+          // PERBAIKAN WIDESCREEN
+          final double maxWidth = screenWidth;
+          final double baseWidth = screenWidth;
 
           return SingleChildScrollView(
             child: Center(
               child: Container(
                 width: maxWidth,
-                padding: EdgeInsets.all(screenWidth * 0.05),
+                padding: EdgeInsets.all(baseWidth * 0.05),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // KARTU RINGKASAN SKOR UTAMA DINAMIS
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(screenWidth * 0.06),
+                      padding: EdgeInsets.all(baseWidth * 0.06),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                        borderRadius: BorderRadius.circular(baseWidth * 0.05),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: screenWidth * 0.03,
+                            blurRadius: baseWidth * 0.03,
                             offset: Offset(0, screenHeight * 0.005),
                           ),
                         ],
                       ),
                       child: Column(
                         children: [
-                          // GAMBAR BADGE HASIL DARI ASSETS
                           Image.asset(
                             'assets/images/result_badge.png',
                             height: screenHeight * 0.16,
                             fit: BoxFit.contain,
                           ),
                           SizedBox(height: screenHeight * 0.02),
-
-                          // Nama Peserta
+                          // Sapaan Dinamis
                           Text(
-                            'Selamat, ${quizProvider.userName}!',
+                            greetingMessage,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: screenWidth * (isLargeScreen ? 0.038 : 0.055),
+                              fontSize: baseWidth * 0.055,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : const Color(0xFF1E3A8A),
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.01),
-
-                          // Angka Skor Akhir Besar
                           Text(
                             '${quizProvider.finalScore}',
                             style: TextStyle(
-                              fontSize: screenWidth * (isLargeScreen ? 0.08 : 0.14),
+                              fontSize: baseWidth * 0.14,
                               fontWeight: FontWeight.w800,
                               color: const Color(0xFF2563EB),
                             ),
@@ -84,36 +90,32 @@ class ResultScreen extends StatelessWidget {
                           Text(
                             'Benar ${quizProvider.correctAnswersCount} dari ${quizProvider.totalQuestions} Soal',
                             style: TextStyle(
-                              fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                              fontSize: baseWidth * 0.036,
                               fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white70 : Colors.blueGrey.shade700,
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.015),
-
-                          // Predikat Pemahaman Etika
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.035,
+                              horizontal: baseWidth * 0.035,
                               vertical: screenHeight * 0.01,
                             ),
                             decoration: BoxDecoration(
                               color: const Color(0xFF2563EB).withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                              borderRadius: BorderRadius.circular(baseWidth * 0.05),
                             ),
                             child: Text(
                               quizProvider.scorePredicate,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                                fontSize: baseWidth * 0.036,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.lightBlueAccent : const Color(0xFF1D4ED8),
                               ),
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.025),
-
-                          // DERETAN TOMBOL AKSI DINAMIS
                           Row(
                             children: [
                               Expanded(
@@ -123,23 +125,21 @@ class ResultScreen extends StatelessWidget {
                                     context.go(AppRoutes.welcome);
                                   },
                                   style: OutlinedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: screenHeight * 0.016,
-                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.016),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                                      borderRadius: BorderRadius.circular(baseWidth * 0.03),
                                     ),
                                   ),
                                   child: Text(
                                     'Ganti Peserta',
                                     style: TextStyle(
-                                      fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                                      fontSize: baseWidth * 0.032, // Lebih kecil sedikit agar tidak kepanjangan
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(width: screenWidth * 0.03),
+                              SizedBox(width: baseWidth * 0.03),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
@@ -148,17 +148,15 @@ class ResultScreen extends StatelessWidget {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF2563EB),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: screenHeight * 0.016,
-                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.016),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                                      borderRadius: BorderRadius.circular(baseWidth * 0.03),
                                     ),
                                   ),
                                   child: Text(
                                     'Ulangi Kuis',
                                     style: TextStyle(
-                                      fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                                      fontSize: baseWidth * 0.032,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -170,24 +168,19 @@ class ResultScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     SizedBox(height: screenHeight * 0.035),
-
-                    // JUDUL BAGIAN PEMBAHASAN ILMIAH DINAMIS
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Pembahasan & Evaluasi Jawaban:',
                         style: TextStyle(
-                          fontSize: screenWidth * (isLargeScreen ? 0.03 : 0.045),
+                          fontSize: baseWidth * 0.045,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : const Color(0xFF0F172A),
                         ),
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.015),
-
-                    // DAFTAR KARTU PEMBAHASAN (ExplanationCard)
                     ...List.generate(questions.length, (index) {
                       return ExplanationCard(
                         questionNumber: index + 1,

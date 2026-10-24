@@ -18,9 +18,9 @@ class OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isLargeScreen = screenWidth > 600;
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width.clamp(0.0, 600.0);
+    final screenHeight = size.height.clamp(0.0, 1000.0);
     final isDark = context.watch<QuizProvider>().isDarkMode;
 
     final List<String> optionLetters = ['A', 'B', 'C', 'D'];
@@ -51,8 +51,8 @@ class OptionCard extends StatelessWidget {
           children: [
             // Ukuran lingkaran dinamis berdasarkan lebar layar
             Container(
-              width: screenWidth * (isLargeScreen ? 0.055 : 0.09),
-              height: screenWidth * (isLargeScreen ? 0.055 : 0.09),
+              width: screenWidth * 0.09,
+              height: screenWidth * 0.09,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -63,7 +63,7 @@ class OptionCard extends StatelessWidget {
               child: Text(
                 letter,
                 style: TextStyle(
-                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
+                  fontSize: screenWidth * 0.038,
                   fontWeight: FontWeight.bold,
                   color: isSelected
                       ? const Color(0xFF1E3A8A)
@@ -78,7 +78,7 @@ class OptionCard extends StatelessWidget {
               child: Text(
                 optionText,
                 style: TextStyle(
-                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
+                  fontSize: screenWidth * 0.038,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   color: isSelected
                       ? Colors.white
@@ -91,7 +91,7 @@ class OptionCard extends StatelessWidget {
               Icon(
                 Icons.check_circle,
                 color: Colors.white,
-                size: screenWidth * (isLargeScreen ? 0.035 : 0.055),
+                size: screenWidth * 0.055,
               ),
           ],
         ),
