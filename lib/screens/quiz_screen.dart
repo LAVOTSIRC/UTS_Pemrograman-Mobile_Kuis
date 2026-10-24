@@ -1,7 +1,7 @@
-import 'package:go_router/go_router.dart';
-import '../config/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../config/routes.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/option_card.dart';
@@ -22,19 +22,16 @@ class QuizScreen extends StatelessWidget {
     final totalQuestions = quizProvider.totalQuestions;
     final isDark = quizProvider.isDarkMode;
 
-    // Mengecek jawaban apa yang sudah dipilih peserta untuk soal nomor ini (bisa null jika belum memilih)
     final selectedOption = quizProvider.getSelectedAnswerFor(currentIndex);
 
     return AppScaffold(
       title: 'Soal ${currentIndex + 1} dari $totalQuestions',
       showBackButton: true,
-      // LayoutBuilder agar tetap rapi saat layar Landscape / Tablet
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isLargeScreen = constraints.maxWidth > 600;
-          final maxWidth = isLargeScreen ? 550.0 : constraints.maxWidth;
+          final maxWidth = isLargeScreen ? screenWidth * 0.65 : constraints.maxWidth;
 
-          // SingleChildScrollView wajib ada agar tidak pernah overflow saat dirotasi
           return SingleChildScrollView(
             child: Center(
               child: Container(
@@ -43,7 +40,7 @@ class QuizScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // SAPAAN NAMA PESERTA & KATEGORI SOAL
+                    // SAPAAN NAMA PESERTA & KATEGORI SOAL DINAMIS
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -51,26 +48,25 @@ class QuizScreen extends StatelessWidget {
                           child: Text(
                             'Peserta: ${quizProvider.userName}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
                               fontWeight: FontWeight.w600,
                               color: isDark ? Colors.white70 : Colors.blueGrey.shade700,
                             ),
                           ),
                         ),
-                        // Badge Kategori Soal (Etika AI / Metodologi)
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.025,
+                            vertical: screenHeight * 0.005,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF2563EB).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(screenWidth * 0.05),
                           ),
                           child: Text(
                             currentQuestion.category,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: screenWidth * (isLargeScreen ? 0.02 : 0.032),
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.lightBlueAccent : const Color(0xFF1D4ED8),
                             ),
@@ -81,12 +77,12 @@ class QuizScreen extends StatelessWidget {
 
                     SizedBox(height: screenHeight * 0.015),
 
-                    // PROGRESS BAR KUIS
+                    // PROGRESS BAR KUIS DINAMIS
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.02),
                       child: LinearProgressIndicator(
                         value: quizProvider.progress,
-                        minHeight: 8,
+                        minHeight: screenHeight * 0.01,
                         backgroundColor: isDark ? Colors.white12 : Colors.blue.shade100,
                         valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
                       ),
@@ -94,24 +90,24 @@ class QuizScreen extends StatelessWidget {
 
                     SizedBox(height: screenHeight * 0.025),
 
-                    // KARTU TEKS PERTANYAAN
+                    // KARTU TEKS PERTANYAAN DINAMIS
                     Container(
                       padding: EdgeInsets.all(screenWidth * 0.05),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.04),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: screenWidth * 0.025,
+                            offset: Offset(0, screenHeight * 0.005),
                           ),
                         ],
                       ),
                       child: Text(
                         currentQuestion.questionText,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: screenWidth * (isLargeScreen ? 0.026 : 0.042),
                           fontWeight: FontWeight.w600,
                           height: 1.4,
                           color: isDark ? Colors.white : const Color(0xFF0F172A),
@@ -121,14 +117,13 @@ class QuizScreen extends StatelessWidget {
 
                     SizedBox(height: screenHeight * 0.025),
 
-                    // DAFTAR 4 PILIHAN JAWABAN MENGGUNAKAN REUSABLE WIDGET OptionCard
+                    // DAFTAR 4 PILIHAN JAWABAN (OptionCard)
                     ...List.generate(currentQuestion.options.length, (index) {
                       return OptionCard(
                         optionIndex: index,
                         optionText: currentQuestion.options[index],
                         isSelected: selectedOption == index,
                         onTap: () {
-                          // Menyimpan pilihan jawaban ke QuizProvider
                           context.read<QuizProvider>().selectAnswer(index);
                         },
                       );
@@ -136,10 +131,9 @@ class QuizScreen extends StatelessWidget {
 
                     SizedBox(height: screenHeight * 0.02),
 
-                    // 5. TOMBOL NAVIGASI SOAL (SEBELUMNYA & SELANJUTNYA / SELESAI)
+                    // TOMBOL NAVIGASI SOAL DINAMIS
                     Row(
                       children: [
-                        // Tombol "Sebelumnya" hanya muncul jika bukan di Soal 1
                         if (currentIndex > 0) ...[
                           Expanded(
                             child: OutlinedButton(
@@ -147,25 +141,28 @@ class QuizScreen extends StatelessWidget {
                                 context.read<QuizProvider>().previousQuestion();
                               },
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.018,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Sebelumnya',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                           SizedBox(width: screenWidth * 0.03),
                         ],
 
-                        // Tombol "Selanjutnya" (atau "Lihat Skor" jika di soal terakhir)
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              // Validasi: Pastikan peserta sudah memilih jawaban sebelum lanjut!
                               if (selectedOption == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -176,23 +173,24 @@ class QuizScreen extends StatelessWidget {
                               }
 
                               if (quizProvider.isLastQuestion) {
-                                // Berpindah ke Halaman Skor Akhir menggunakan go_router
                                 context.go(AppRoutes.result);
                               } else {
-                                // Pindah ke soal berikutnya
                                 context.read<QuizProvider>().nextQuestion();
                               }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF2563EB),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenHeight * 0.018,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(screenWidth * 0.03),
                               ),
                             ),
                             child: Text(
                               quizProvider.isLastQuestion ? 'Selesai & Lihat Skor' : 'Selanjutnya',
-                              style: const TextStyle(
+                              style: TextStyle(
+                                fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.038),
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../config/routes.dart';
 import '../providers/quiz_provider.dart';
 import '../widgets/app_scaffold.dart';
-import 'package:go_router/go_router.dart';
-import '../config/routes.dart';
 
-// Menggunakan StatefulWidget karena butuh initState & dispose untuk TextEditingController
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -20,7 +19,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Ambil nama dari QuizProvider supaya kalau layar dirotasi tidak hilang
     final savedName = context.read<QuizProvider>().userName;
     _nameController = TextEditingController(text: savedName);
   }
@@ -40,29 +38,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       return;
     }
 
-    // Simpan nama ke QuizProvider
     final quizProvider = context.read<QuizProvider>();
     quizProvider.resetQuiz();
     quizProvider.setUserName(name);
 
-    // Navigasi deklaratif menggunakan go_router sesuai best practice Modul 3!
     context.push(AppRoutes.quiz);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran layar
+    // Mengambil ukuran layar secara dinamis menggunakan MediaQuery
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isDark = context.watch<QuizProvider>().isDarkMode;
 
     return AppScaffold(
       title: 'Scholaria Quiz',
-      // LayoutBuilder untuk membatasi lebar di layar besar/Landscape
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isLargeScreen = constraints.maxWidth > 600;
-          final maxWidth = isLargeScreen ? 500.0 : constraints.maxWidth;
+          final maxWidth = isLargeScreen ? screenWidth * 0.6 : constraints.maxWidth;
 
           return SingleChildScrollView(
             child: Center(
@@ -74,16 +69,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     SizedBox(height: screenHeight * 0.02),
 
-                    // 1. GAMBAR LOGO DARI ASSETS
+                    // GAMBAR LOGO DARI ASSETS
                     Image.asset(
                       'assets/images/ethics_logo.png',
-                      height: screenHeight * 0.22, // Tinggi gambar 22% dari tinggi layar
+                      height: screenHeight * 0.22,
                       fit: BoxFit.contain,
                     ),
 
                     SizedBox(height: screenHeight * 0.03),
 
-                    // 2. JUDUL APLIKASI
+                    // JUDUL APLIKASI DINAMIS
                     Text(
                       'Etika Karya Ilmiah & Metodologi di Era AI',
                       textAlign: TextAlign.center,
@@ -107,17 +102,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
                     SizedBox(height: screenHeight * 0.04),
 
-                    // 3. KOTAK FORM INPUT NAMA
+                    // KOTAK FORM INPUT NAMA DINAMIS
                     Container(
                       padding: EdgeInsets.all(screenWidth * 0.05),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.04),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: screenWidth * 0.025,
+                            offset: Offset(0, screenHeight * 0.005),
                           ),
                         ],
                       ),
@@ -134,7 +129,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           SizedBox(height: screenHeight * 0.01),
 
-                          // TextField Input Nama
                           TextField(
                             controller: _nameController,
                             onChanged: (value) {
@@ -145,28 +139,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 });
                               }
                             },
+                            style: TextStyle(
+                              fontSize: screenWidth * (isLargeScreen ? 0.025 : 0.038),
+                            ),
                             decoration: InputDecoration(
                               hintText: 'Masukkan nama lengkapmu...',
+                              hintStyle: TextStyle(
+                                fontSize: screenWidth * (isLargeScreen ? 0.024 : 0.036),
+                              ),
                               errorText: _errorText,
-                              prefixIcon: const Icon(Icons.person),
+                              prefixIcon: Icon(
+                                Icons.person,
+                                size: screenWidth * (isLargeScreen ? 0.035 : 0.055),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: screenHeight * 0.02,
+                                horizontal: screenWidth * 0.04,
+                              ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(screenWidth * 0.03),
                               ),
                             ),
                           ),
 
                           SizedBox(height: screenHeight * 0.025),
 
-                          // 4. TOMBOL MULAI KUIS
+                          // TOMBOL MULAI KUIS DINAMIS
                           SizedBox(
                             width: double.infinity,
-                            height: 50,
+                            height: screenHeight * 0.065,
                             child: ElevatedButton(
                               onPressed: _startQuiz,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF2563EB),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
                                 ),
                               ),
                               child: Text(
